@@ -3,7 +3,9 @@ module Data.Text.Arbitrary(
 ) where
 
 import          Data.Text
+
 import          Test.QuickCheck
+import          Test.QuickCheck.Text
 
 instance Arbitrary Text where
-  arbitrary = undefined
+  arbitrary = genValidUtf8
