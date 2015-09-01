@@ -1,0 +1,26 @@
+sudo: false
+
+# for libgmp
+language: haskell
+ghc: 7.8
+
+cache:
+  directories:
+    - $HOME/.stack
+
+env:
+  matrix:
+    - STACK_YAML=stack-lts-2.18.yaml
+    - STACK_YAML=stack-lts-3.2.yaml
+
+install:
+  - travis_retry wget https://github.com/commercialhaskell/stack/releases/download/v0.1.3.1/stack-0.1.3.1-x86_64-linux.gz
+  - gunzip stack-0.1.3.1-x86_64-linux.gz
+  - mv stack-0.1.3.1-x86_64-linux stack
+  - chmod +x stack
+  - travis_retry ./stack setup
+  - travis_retry ./stack install --only-snapshot -j4 --verbosity info
+
+script:
+  - ./stack build --haddock --test
+
