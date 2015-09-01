@@ -3,9 +3,9 @@
 module Main where
 
 import           Data.Bits
-import qualified Data.ByteString as BS
+import qualified Data.ByteString      as BS
 import           Data.Text.Encoding
-                 
+
 import           Test.QuickCheck
 import           Test.QuickCheck.Utf8
 
@@ -17,6 +17,17 @@ prop_oneByte_lsb :: Property
 prop_oneByte_lsb = forAll oneByte $ \bs ->
   let b = head $ BS.unpack bs
   in testBit b 7 === False
+
+prop_oneByte_range :: Property
+prop_oneByte_range = forAll oneByte $ \bs ->
+  let s = sum $ fmap fromIntegral $ BS.unpack bs
+  in (s >= 0 && s <= 127)
+
+
+prop_twoByte_range :: Property
+prop_twoByte_range = forAll twoByte $ \bs ->
+  let s = sum $ fmap fromIntegral $ BS.unpack bs
+  in (s >= 320 && s <= 65439)
 
 return []
 main = $quickCheckAll

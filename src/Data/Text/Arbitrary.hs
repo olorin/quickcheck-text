@@ -2,10 +2,10 @@ module Data.Text.Arbitrary(
   Text()
 ) where
 
-import          Data.Text
+import           Data.Text
 
-import          Test.QuickCheck
-import          Test.QuickCheck.Utf8
+import           Test.QuickCheck
+import           Test.QuickCheck.Utf8
 
 instance Arbitrary Text where
   arbitrary = genValidUtf8
