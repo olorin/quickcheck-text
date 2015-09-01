@@ -1,5 +1,7 @@
-module Test.QuickCheck.Text(
-  genValidUtf8
+module Test.QuickCheck.Utf8(
+    genValidUtf8
+  , utf8BS
+  , oneByte
 ) where
 
 import           Control.Applicative

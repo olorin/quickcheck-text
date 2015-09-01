@@ -5,7 +5,7 @@ module Data.Text.Arbitrary(
 import          Data.Text
 
 import          Test.QuickCheck
-import          Test.QuickCheck.Text
+import          Test.QuickCheck.Utf8
 
 instance Arbitrary Text where
   arbitrary = genValidUtf8
