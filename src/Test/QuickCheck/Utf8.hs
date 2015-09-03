@@ -57,9 +57,12 @@ threeByte = do
   (b2, b3) <- fmap (,) nonInitial `ap` nonInitial
   pure . buildUtf $ putBytes3 b1 b2 b3
 
+-- | 
 fourByte :: Gen ByteString
 fourByte = do
-  b1 <- inRange 240 248 -- 11110bbb
+  -- Per <https://tools.ietf.org/html/rfc3629 RFC 3629>, the four-byte
+  -- range ends at U+10FFF.
+  b1 <- inRange 0 1
   (b2, b3, b4) <- fmap (,,) nonInitial `ap` nonInitial `ap` nonInitial
   pure . buildUtf $ putBytes4 b1 b2 b3 b4
 
@@ -70,10 +73,16 @@ putBytes2 :: Word8 -> Word8 -> Builder
 putBytes2 b1 b2 =  putCharUtf8 . chr . fromIntegral . runGet getWord16be $ BL.pack [b1, b2]
 
 putBytes3 :: Word8 -> Word8 -> Word8 -> Builder
-putBytes3 b1 b2 b3 =  putCharUtf8 . chr . fromIntegral . runGet getWord16be $ BL.pack [b1, b2, b3]
+putBytes3 b1 b2 b3 =  putCharUtf8 . chr . runGet getWord24be $ BL.pack [b1, b2, b3]
+ where
+  getWord24be :: Get Int
+  getWord24be = do
+    w <- fromIntegral <$> getWord16be
+    b <- fromIntegral <$> getWord8
+    pure $ w + b
 
 putBytes4 :: Word8 -> Word8 -> Word8 -> Word8 -> Builder
-putBytes4 b1 b2 b3 b4 =  putCharUtf8 . chr . fromIntegral . runGet getWord16be $ BL.pack [b1, b2, b3, b4]
+putBytes4 b1 b2 b3 b4 =  putCharUtf8 . chr . fromIntegral . runGet getWord32be $ BL.pack [b1, b2, b3, b4]
 
 nonInitial :: Gen Word8
 nonInitial = inRange 128 191
