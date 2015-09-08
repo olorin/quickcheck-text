@@ -1,5 +1,5 @@
 name:                quickcheck-text
-version:             0.1.0.0
+version:             0.1.0.1
 synopsis:            Alternative arbitrary instance for Text
 description:         The usual Arbitrary instance for Text
                      (in
@@ -21,7 +21,7 @@ extra-source-files:  README.md
 
 source-repository    head
   type:              git
-  location:          git@github.com:olorin/quickcheck-instances.git
+  location:          git@github.com:olorin/quickcheck-text.git
 
 library
   exposed-modules:     Test.QuickCheck.Utf8
