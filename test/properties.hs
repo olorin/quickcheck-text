@@ -33,5 +33,9 @@ prop_threeByte_range = forAll threeByte $ \bs ->
   let s = sum $ fmap fromIntegral $ BS.unpack bs
   in (s >= 480 && s <= 16777071)
 
+prop_validUtf81 :: Property
+prop_validUtf81 = forAll utf8BS1 $ \bs ->
+  BS.length bs >= 1
+
 return []
 main = $quickCheckAll

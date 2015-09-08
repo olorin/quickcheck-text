@@ -1,6 +1,13 @@
 name:                quickcheck-text
 version:             0.1.0.0
 synopsis:            Alternative arbitrary instance for Text
+description:         The usual Arbitrary instance for Text
+                     (in
+                     <https://hackage.haskell.org/package/quickcheck-instances quickcheck-instances>) 
+                     only has single-byte
+                     instances and so isn't an ideal representation of a valid UTF-8
+                     character. This package has generators for one-, two- and three-byte
+                     UTF-8 characters (all that are currently in use).
 license:             MIT
 license-file:        LICENSE
 author:              Sharif Olorin
@@ -9,6 +16,10 @@ copyright:           2015 Sharif Olorin
 category:            Text
 build-type:          Simple
 cabal-version:       >=1.10
+
+source-repository    head
+  type:              git
+  location:          git@github.com:olorin/quickcheck-instances.git
 
 library
   exposed-modules:     Test.QuickCheck.Utf8

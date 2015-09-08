@@ -1,6 +1,8 @@
 module Test.QuickCheck.Utf8(
     genValidUtf8
   , utf8BS
+  , genValidUtf81
+  , utf8BS1
     -- * Generators for single characters
   , oneByte
   , twoByte
@@ -23,11 +25,26 @@ import           Data.Word
 
 import           Test.QuickCheck
 
+-- |
+-- Generate a possibly-empty valid UTF-8 'Text' value.
 genValidUtf8 :: Gen Text
 genValidUtf8 = fmap decodeUtf8 utf8BS
 
+-- |
+-- Generate a possibly-empty sequence of bytes which represent a valid
+-- UTF-8 code point.
 utf8BS :: Gen ByteString
-utf8BS = fmap BS.concat $ elements symbolTypes >>= listOf
+utf8BS = fmap BS.concat $ elements symbolTypes  >>= listOf
+
+-- |
+-- Like 'genValidUtf8', but does not allow empty 'Text' values.
+genValidUtf81 :: Gen Text
+genValidUtf81 = fmap decodeUtf8 utf8BS1
+
+-- |
+-- Like 'utf8BS', but does not allow empty 'ByteString's.
+utf8BS1 :: Gen ByteString
+utf8BS1 = fmap BS.concat $ elements symbolTypes  >>= listOf1
 
 symbolTypes :: [Gen ByteString]
 symbolTypes = [ oneByte
