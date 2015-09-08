@@ -8,6 +8,7 @@ description:         The usual Arbitrary instance for Text
                      instances and so isn't an ideal representation of a valid UTF-8
                      character. This package has generators for one-, two- and three-byte
                      UTF-8 characters (all that are currently in use).
+homepage:            https://github.com/olorin/quickcheck-text
 license:             MIT
 license-file:        LICENSE
 author:              Sharif Olorin
