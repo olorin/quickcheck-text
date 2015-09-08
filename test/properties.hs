@@ -33,12 +33,5 @@ prop_threeByte_range = forAll threeByte $ \bs ->
   let s = sum $ fmap fromIntegral $ BS.unpack bs
   in (s >= 480 && s <= 16777071)
 
-prop_fourByte_range :: Property
-prop_fourByte_range = forAll fourByte $ \bs ->
-  let s = sum $ fmap fromIntegral $ BS.unpack bs
-  in (s >= 624 && s <= 0x10ffff)
-
-
-
 return []
 main = $quickCheckAll

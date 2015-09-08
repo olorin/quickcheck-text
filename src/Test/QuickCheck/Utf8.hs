@@ -5,7 +5,6 @@ module Test.QuickCheck.Utf8(
   , oneByte
   , twoByte
   , threeByte
-  , fourByte
 ) where
 
 import           Control.Monad
@@ -34,7 +33,6 @@ symbolTypes :: [Gen ByteString]
 symbolTypes = [ oneByte
               , twoByte
               , threeByte
-              , fourByte
               ]
 
 inRange :: Int -> Int -> Gen Word8
@@ -57,15 +55,6 @@ threeByte = do
   (b2, b3) <- fmap (,) nonInitial `ap` nonInitial
   pure . buildUtf $ putBytes3 b1 b2 b3
 
--- | 
-fourByte :: Gen ByteString
-fourByte = do
-  -- Per <https://tools.ietf.org/html/rfc3629 RFC 3629>, the four-byte
-  -- range ends at U+10FFF.
-  b1 <- inRange 0 1
-  (b2, b3, b4) <- fmap (,,) nonInitial `ap` nonInitial `ap` nonInitial
-  pure . buildUtf $ putBytes4 b1 b2 b3 b4
-
 buildUtf :: Builder -> ByteString 
 buildUtf = BS.concat . BL.toChunks . toLazyByteString
 
@@ -80,9 +69,6 @@ putBytes3 b1 b2 b3 =  putCharUtf8 . chr . runGet getWord24be $ BL.pack [b1, b2, 
     w <- fromIntegral <$> getWord16be
     b <- fromIntegral <$> getWord8
     pure $ w + b
-
-putBytes4 :: Word8 -> Word8 -> Word8 -> Word8 -> Builder
-putBytes4 b1 b2 b3 b4 =  putCharUtf8 . chr . fromIntegral . runGet getWord32be $ BL.pack [b1, b2, b3, b4]
 
 nonInitial :: Gen Word8
 nonInitial = inRange 128 191
