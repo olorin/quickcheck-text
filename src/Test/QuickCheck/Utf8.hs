@@ -57,20 +57,20 @@ inRange lo hi = fmap fromIntegral $ elements [lo..hi]
 
 -- | Single-byte UTF-8 (i.e., a standard ASCII byte with a cleared MSB).
 oneByte :: Gen ByteString
-oneByte = fmap (BS.pack . pure) $
+oneByte = fmap (BS.pack . return) $
   inRange 0 127 -- 0bbbbbbb
 
 twoByte :: Gen ByteString
 twoByte = do
   b1 <- inRange 192 223 -- 110bbbbb
   b2 <- nonInitial
-  pure . buildUtf $ putBytes2 b1 b2
+  return . buildUtf $ putBytes2 b1 b2
 
 threeByte :: Gen ByteString
 threeByte = do
   b1 <- inRange 224 239 -- 1110bbbb
   (b2, b3) <- fmap (,) nonInitial `ap` nonInitial
-  pure . buildUtf $ putBytes3 b1 b2 b3
+  return . buildUtf $ putBytes3 b1 b2 b3
 
 buildUtf :: Builder -> ByteString 
 buildUtf = BS.concat . BL.toChunks . toLazyByteString
@@ -83,9 +83,9 @@ putBytes3 b1 b2 b3 =  putCharUtf8 . chr . runGet getWord24be $ BL.pack [b1, b2, 
  where
   getWord24be :: Get Int
   getWord24be = do
-    w <- fromIntegral <$> getWord16be
-    b <- fromIntegral <$> getWord8
-    pure $ w + b
+    w <- fromIntegral `fmap` getWord16be
+    b <- fromIntegral `fmap` getWord8
+    return $ w + b
 
 nonInitial :: Gen Word8
 nonInitial = inRange 128 191
