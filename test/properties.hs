@@ -2,9 +2,13 @@
 
 module Main where
 
+import           Control.Monad
+
 import           Data.Bits
 import qualified Data.ByteString      as BS
 import           Data.Text.Encoding
+
+import           System.Exit
 
 import           Test.QuickCheck
 import           Test.QuickCheck.Utf8
@@ -38,4 +42,8 @@ prop_validUtf81 = forAll utf8BS1 $ \bs ->
   BS.length bs >= 1
 
 return []
-main = $quickCheckAll
+props :: IO Bool
+props = $quickCheckAll
+
+main :: IO ()
+main = props >>= flip when exitFailure . not

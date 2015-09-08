@@ -22,5 +22,6 @@ install:
   - travis_retry ./stack install --only-snapshot -j4 --verbosity info
 
 script:
-  - ./stack build --haddock --test
+  - ./stack build --haddock
+  - ./stack test
 
