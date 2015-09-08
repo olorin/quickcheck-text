@@ -21,6 +21,7 @@ import           Data.Char
 import           Data.Text           (Text)
 import qualified Data.Text           as T
 import           Data.Text.Encoding
+import           Data.Text.Internal.Encoding.Utf8
 import           Data.Word
 
 import           Test.QuickCheck
@@ -62,30 +63,32 @@ oneByte = fmap (BS.pack . return) $
 
 twoByte :: Gen ByteString
 twoByte = do
-  b1 <- inRange 192 223 -- 110bbbbb
+  b1 <- inRange 0xC2 0xDF -- 110bbbbb
   b2 <- nonInitial
   return . buildUtf $ putBytes2 b1 b2
 
 threeByte :: Gen ByteString
 threeByte = do
-  b1 <- inRange 224 239 -- 1110bbbb
-  (b2, b3) <- fmap (,) nonInitial `ap` nonInitial
+  (b1, b2) <- oneof [b3_1, b3_2, b3_3, b3_4]
+  b3 <- nonInitial
   return . buildUtf $ putBytes3 b1 b2 b3
+ where
+  b3_1 = (,) `fmap` return 0xE0 `ap` inRange 0xA0 0xBF
+
+  b3_2 = (,) `fmap` inRange 0xE1 0xEC `ap` nonInitial
+
+  b3_3 = (,) `fmap` return 0xED `ap` inRange 0x80 0x9F
+
+  b3_4 = (,) `fmap` inRange 0xEE 0xEF `ap` nonInitial
 
 buildUtf :: Builder -> ByteString 
 buildUtf = BS.concat . BL.toChunks . toLazyByteString
 
 putBytes2 :: Word8 -> Word8 -> Builder
-putBytes2 b1 b2 =  putCharUtf8 . chr . fromIntegral . runGet getWord16be $ BL.pack [b1, b2]
+putBytes2 b1 b2 =  putCharUtf8 $ chr2 b1 b2
 
 putBytes3 :: Word8 -> Word8 -> Word8 -> Builder
-putBytes3 b1 b2 b3 =  putCharUtf8 . chr . runGet getWord24be $ BL.pack [b1, b2, b3]
- where
-  getWord24be :: Get Int
-  getWord24be = do
-    w <- fromIntegral `fmap` getWord16be
-    b <- fromIntegral `fmap` getWord8
-    return $ w + b
+putBytes3 b1 b2 b3 =  putCharUtf8 $ chr3 b1 b2 b3
 
 nonInitial :: Gen Word8
-nonInitial = inRange 128 191
+nonInitial = inRange 0x80 0xBF
