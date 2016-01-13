@@ -6,6 +6,7 @@ import           Control.Monad
 
 import           Data.Bits
 import qualified Data.ByteString      as BS
+import qualified Data.Text as T
 import           Data.Text.Encoding
 
 import           System.Exit
@@ -15,7 +16,8 @@ import           Test.QuickCheck.Utf8
 
 prop_decodes_without_exception :: Property
 prop_decodes_without_exception = forAll utf8BS $ \bs ->
-  decodeUtf8 bs === decodeUtf8 bs
+  let t = decodeUtf8 bs in
+  (T.length t >=) 0 === True
 
 prop_oneByte_lsb :: Property
 prop_oneByte_lsb = forAll oneByte $ \bs ->
@@ -37,9 +39,14 @@ prop_threeByte_range = forAll threeByte $ \bs ->
   let s = sum $ fmap fromIntegral $ BS.unpack bs
   in (s >= 480 && s <= 16777071)
 
-prop_validUtf81 :: Property
-prop_validUtf81 = forAll utf8BS1 $ \bs ->
+prop_validUtf81_length :: Property
+prop_validUtf81_length = forAll utf8BS1 $ \bs ->
   BS.length bs >= 1
+
+prop_validUtf81_valid :: Property
+prop_validUtf81_valid = forAll utf8BS1 $ \bs ->
+  let t = decodeUtf8 bs in
+  (T.length t >= 1) === True
 
 return []
 props :: IO Bool
