@@ -12,14 +12,11 @@ module Test.QuickCheck.Utf8(
 import           Control.Monad
 
 import           Data.Binary.Builder
-import           Data.Binary.Get
 
 import           Data.ByteString     (ByteString)
 import qualified Data.ByteString     as BS
 import qualified Data.ByteString.Lazy     as BL
-import           Data.Char
 import           Data.Text           (Text)
-import qualified Data.Text           as T
 import           Data.Text.Encoding
 import           Data.Text.Internal.Encoding.Utf8
 import           Data.Word
