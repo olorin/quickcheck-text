@@ -1,8 +1,16 @@
 module Test.QuickCheck.Utf8(
     genValidUtf8
+  , shrinkValidUtf8
+
   , utf8BS
+  , shrinkUtf8BS
+
   , genValidUtf81
+  , shrinkValidUtf81
+
   , utf8BS1
+  , shrinkUtf8BS1
+
     -- * Generators for single characters
   , oneByte
   , twoByte
@@ -17,6 +25,7 @@ import           Data.ByteString     (ByteString)
 import qualified Data.ByteString     as BS
 import qualified Data.ByteString.Lazy     as BL
 import           Data.Text           (Text)
+import qualified Data.Text           as T
 import           Data.Text.Encoding
 import           Data.Text.Internal.Encoding.Utf8
 import           Data.Word
@@ -29,10 +38,21 @@ genValidUtf8 :: Gen Text
 genValidUtf8 = fmap decodeUtf8 utf8BS
 
 -- |
+-- Shrink a possible-empty valid UTF-8 'Text' value.
+shrinkValidUtf8 :: Text -> [Text]
+shrinkValidUtf8 = fmap T.pack . shrink . T.unpack
+
+-- |
 -- Generate a possibly-empty sequence of bytes which represent a valid
 -- UTF-8 code point.
 utf8BS :: Gen ByteString
 utf8BS = fmap BS.concat $ elements symbolTypes  >>= listOf
+
+-- |
+-- Shrink a possible-empty sequence of bytes which represent a valid
+-- UTF-8 code point.
+shrinkUtf8BS :: ByteString -> [ByteString]
+shrinkUtf8BS = fmap encodeUtf8 . shrinkValidUtf8 . decodeUtf8
 
 -- |
 -- Like 'genValidUtf8', but does not allow empty 'Text' values.
@@ -40,9 +60,19 @@ genValidUtf81 :: Gen Text
 genValidUtf81 = fmap decodeUtf8 utf8BS1
 
 -- |
+-- List 'genValidUtf8', bute does not allow empty 'Text' values.
+shrinkValidUtf81 :: Text -> [Text]
+shrinkValidUtf81 = filter (not . T.null) . shrinkValidUtf8
+
+-- |
 -- Like 'utf8BS', but does not allow empty 'ByteString's.
 utf8BS1 :: Gen ByteString
 utf8BS1 = fmap BS.concat $ elements symbolTypes  >>= listOf1
+
+-- |
+-- Like 'shrinkUtf8BS', but does not allow empty 'ByteString's.
+shrinkUtf8BS1 :: ByteString -> [ByteString]
+shrinkUtf8BS1 = filter (not . BS.null) . shrinkUtf8BS
 
 symbolTypes :: [Gen ByteString]
 symbolTypes = [ oneByte

@@ -11,3 +11,4 @@ import           Test.QuickCheck.Utf8
 
 instance Arbitrary Text where
   arbitrary = genValidUtf8
+  shrink = shrinkValidUtf8
