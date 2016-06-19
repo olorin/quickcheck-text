@@ -1,5 +1,5 @@
 name:                quickcheck-text
-version:             0.1.1.0
+version:             0.1.1.1
 synopsis:            Alternative arbitrary instance for Text
 description:         The usual Arbitrary instance for Text
                      (in
@@ -26,7 +26,7 @@ source-repository    head
 library
   exposed-modules:     Test.QuickCheck.Utf8
                        Data.Text.Arbitrary
-  build-depends:       base >=4.7 && <5
+  build-depends:       base >=4 && <5
                      , QuickCheck
                      , binary
                      , bytestring
