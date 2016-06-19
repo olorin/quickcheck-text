@@ -1,5 +1,5 @@
 name:                quickcheck-text
-version:             0.1.0.1
+version:             0.1.1.0
 synopsis:            Alternative arbitrary instance for Text
 description:         The usual Arbitrary instance for Text
                      (in
