@@ -15,7 +15,7 @@ import           Test.QuickCheck
 import           Test.QuickCheck.Utf8
 
 prop_decodes_without_exception :: Property
-prop_decodes_without_exception = forAll utf8BS $ \bs ->
+prop_decodes_without_exception = forAllAndShrinks utf8BS shrinkUtf8BS $ \bs ->
   let t = decodeUtf8 bs in
   (T.length t >=) 0 === True
 
@@ -40,13 +40,20 @@ prop_threeByte_range = forAll threeByte $ \bs ->
   in (s >= 480 && s <= 16777071)
 
 prop_validUtf81_length :: Property
-prop_validUtf81_length = forAll utf8BS1 $ \bs ->
+prop_validUtf81_length = forAllAndShrinks utf8BS1 shrinkUtf8BS1 $ \bs ->
   BS.length bs >= 1
 
 prop_validUtf81_valid :: Property
-prop_validUtf81_valid = forAll utf8BS1 $ \bs ->
+prop_validUtf81_valid = forAllAndShrinks utf8BS1 shrinkUtf8BS1 $ \bs ->
   let t = decodeUtf8 bs in
   (T.length t >= 1) === True
+
+-- |
+-- Ensure that the shrink applied to the generated value also satisfies the property.
+forAllAndShrinks :: (Show a, Testable prop) => Gen a -> (a -> [a]) -> (a -> prop) -> Property
+forAllAndShrinks gen shr prop =
+  forAll (gen >>= \x -> return (x : shr x)) $ \xs ->
+    conjoin $ fmap prop xs
 
 return []
 props :: IO Bool
