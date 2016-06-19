@@ -13,7 +13,7 @@ license:             MIT
 license-file:        LICENSE
 author:              Sharif Olorin
 maintainer:          sio@tesser.org
-copyright:           2015 Sharif Olorin
+copyright:           2015-2016 Sharif Olorin and others
 category:            Text
 build-type:          Simple
 cabal-version:       >=1.10
