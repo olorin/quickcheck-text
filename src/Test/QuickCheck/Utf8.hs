@@ -12,6 +12,7 @@ module Test.QuickCheck.Utf8(
   , shrinkUtf8BS1
 
     -- * Generators for single characters
+  , genUtf8CharBS
   , oneByte
   , twoByte
   , threeByte
@@ -82,6 +83,14 @@ symbolTypes = [ oneByte
 
 inRange :: Int -> Int -> Gen Word8
 inRange lo hi = fmap fromIntegral $ elements [lo..hi]
+
+-- | A valid UTF-8 character, one to three bytes long.
+genUtf8CharBS :: Gen ByteString
+genUtf8CharBS = oneof [
+    oneByte
+  , twoByte
+  , threeByte
+  ]
 
 -- | Single-byte UTF-8 (i.e., a standard ASCII byte with a cleared MSB).
 oneByte :: Gen ByteString
