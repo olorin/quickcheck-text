@@ -12,7 +12,8 @@ module Test.QuickCheck.Utf8(
   , shrinkUtf8BS1
 
     -- * Generators for single characters
-  , genUtf8CharBS
+  , genChar
+  , genUtf8Character
   , oneByte
   , twoByte
   , threeByte
@@ -84,9 +85,15 @@ symbolTypes = [ oneByte
 inRange :: Int -> Int -> Gen Word8
 inRange lo hi = fmap fromIntegral $ elements [lo..hi]
 
+-- | Generate a valid 'Char'. Note that this is UTF-16, not UTF-8, but
+-- the intent is the same: the Arbitrary instance for 'Char' in quickcheck
+-- makes no attempt to generate valid non-ASCII characters at this time.
+genChar :: Gen Char
+genChar = (T.head . decodeUtf8) <$> genUtf8Character
+
 -- | A valid UTF-8 character, one to three bytes long.
-genUtf8CharBS :: Gen ByteString
-genUtf8CharBS = oneof [
+genUtf8Character :: Gen ByteString
+genUtf8Character = oneof [
     oneByte
   , twoByte
   , threeByte
