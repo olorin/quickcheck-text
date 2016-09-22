@@ -89,7 +89,7 @@ inRange lo hi = fmap fromIntegral $ elements [lo..hi]
 -- the intent is the same: the Arbitrary instance for 'Char' in quickcheck
 -- makes no attempt to generate valid non-ASCII characters at this time.
 genChar :: Gen Char
-genChar = (T.head . decodeUtf8) <$> genUtf8Character
+genChar = fmap (T.head . decodeUtf8) genUtf8Character
 
 -- | A valid UTF-8 character, one to three bytes long.
 genUtf8Character :: Gen ByteString
