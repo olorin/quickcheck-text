@@ -57,6 +57,12 @@ shrinkUtf8BS :: ByteString -> [ByteString]
 shrinkUtf8BS = fmap encodeUtf8 . shrinkValidUtf8 . decodeUtf8
 
 -- |
+-- Shrink a possible-empty sequence of bytes which represent a valid
+-- UTF-8 code point.
+shrinkUtf8BS :: ByteString -> [ByteString]
+shrinkUtf8BS = fmap encodeUtf8 . shrinkValidUtf8 . decodeUtf8
+
+-- |
 -- Like 'genValidUtf8', but does not allow empty 'Text' values.
 genValidUtf81 :: Gen Text
 genValidUtf81 = fmap decodeUtf8 utf8BS1
@@ -70,6 +76,11 @@ shrinkValidUtf81 = filter (not . T.null) . shrinkValidUtf8
 -- Like 'utf8BS', but does not allow empty 'ByteString's.
 utf8BS1 :: Gen ByteString
 utf8BS1 = fmap BS.concat . listOf1 $ oneof symbolTypes
+
+-- |
+-- Like 'shrinkUtf8BS', but does not allow empty 'ByteString's.
+shrinkUtf8BS1 :: ByteString -> [ByteString]
+shrinkUtf8BS1 = filter (not . BS.null) . shrinkUtf8BS
 
 -- |
 -- Like 'shrinkUtf8BS', but does not allow empty 'ByteString's.
